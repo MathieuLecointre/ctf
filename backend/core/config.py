@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 import re
 from pydantic import AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -34,14 +34,25 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
 
     # Orchestration Docker (fournie par RES)
-    # Compatible socket local unix:///var/run/docker.sock ou distant tcp://<ip>:2376 (Architecture 2 VM)
+    # Mode "local" (dév sans VM via Docker SDK) ou "remote" (prod 2 VMs via mTLS)
+    ORCHESTRATOR_MODE: str = "local"
+    ORCHESTRATOR_URL: str = "https://10.10.10.2:8443"
+    ORCHESTRATOR_CA_CERT: Optional[str] = None
+    ORCHESTRATOR_CLIENT_CERT: Optional[str] = None
+    ORCHESTRATOR_CLIENT_KEY: Optional[str] = None
+    ORCHESTRATOR_API_KEY: Optional[str] = None
+
+    # Compatible socket local unix:///var/run/docker.sock ou npipe:////./pipe/docker_engine sous Windows
     DOCKER_HOST: str = "unix://var/run/docker.sock"
     DOCKER_NETWORK_PREFIX: str = "ctf_player"
     TRAEFIK_NETWORK: str = "traefik-net"
     TRAEFIK_DOMAIN: str = "ctf.local"
+    INSTANCE_BASE_DOMAIN: str = "chal.ctf.local"
 
-    # Regles metier & Limites des instances
-    INSTANCE_TIMEOUT_SECONDS: int = 1800  # 30 minutes
+    # Regles metier & Limites des instances (validees avec Hamza)
+    INSTANCE_TIMEOUT_SECONDS: int = 3600  # 60 minutes
+    MAX_INSTANCES_PER_USER: int = 2       # 2 instances max par joueur
+    MAX_INSTANCE_DURATION_SECONDS: int = 10800  # 3 heures max avec prolongations
     INSTANCE_CPU_LIMIT: str = "0.5"       # 50% d'un CPU max
     INSTANCE_MEM_LIMIT: str = "256m"      # 256 Mo de RAM max
     FLAG_REGEX: str = r"^CTF\{[a-zA-Z0-9_\-\+\=\!\@\#\$\%\^\&\*\?]{4,128}\}$"
