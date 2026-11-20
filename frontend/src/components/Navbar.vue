@@ -71,6 +71,24 @@ const handleLogout = () => {
             >
               Classement
             </RouterLink>
+
+            <!-- Admin Back-office Link (Visible only to Admins) -->
+            <RouterLink
+              v-if="userStore.isAdmin"
+              to="/admin/challenges"
+              :class="[
+                route.path.startsWith('/admin')
+                  ? 'text-[#ffcc00] bg-[#162545] border-b-2 border-[#ffcc00]'
+                  : 'text-amber-300 hover:text-white hover:bg-[#162545]/60',
+                'px-3 py-1.5 rounded-t transition-colors flex items-center gap-1.5 font-bold'
+              ]"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-[#ff3e3e]"></span>
+              <span>Admin</span>
+              <span class="text-[9px] px-1 rounded bg-[#ffcc00]/20 text-[#ffcc00] border border-[#ffcc00]/50 font-mono">
+                ROOT
+              </span>
+            </RouterLink>
           </nav>
         </div>
 
@@ -159,16 +177,41 @@ const handleLogout = () => {
               <span>{{ userStore.score }} pts</span>
             </div>
 
-            <!-- Profile Badge with Username & Rank -->
-            <div class="flex items-center gap-2 border border-[#333f59] bg-[#162545]/80 hover:bg-[#162545] px-3 py-1 rounded text-xs font-rajdhani font-semibold text-slate-200 tracking-wider transition-colors">
-              <svg class="w-4 h-4 text-[#7ec8ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Role Toggle Switcher (Demo Quick Test) -->
+            <button
+              type="button"
+              class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded border text-[11px] font-mono transition-all cursor-pointer"
+              :class="[
+                userStore.isAdmin
+                  ? 'border-[#ffcc00]/50 text-[#ffcc00] bg-[#ffcc00]/10 hover:bg-[#ffcc00]/20'
+                  : 'border-slate-600 text-slate-400 bg-[#0a1a2f] hover:text-white hover:border-slate-500'
+              ]"
+              :title="`Rôle: ${userStore.role.toUpperCase()} (Cliquez pour basculer vers ${userStore.isAdmin ? 'PLAYER' : 'ADMIN'})`"
+              @click="userStore.toggleRole"
+            >
+              <span class="w-2 h-2 rounded-full" :class="userStore.isAdmin ? 'bg-[#ffcc00] animate-pulse' : 'bg-slate-400'"></span>
+              <span>Vue: {{ userStore.role.toUpperCase() }}</span>
+            </button>
+
+            <!-- Profile Link with Username & Rank -->
+            <RouterLink
+              to="/profile"
+              :class="[
+                route.path === '/profile'
+                  ? 'border-[#7ec8ff] bg-[#162545] text-white shadow-md shadow-[#7ec8ff]/20'
+                  : 'border-[#333f59] bg-[#162545]/80 hover:bg-[#162545] hover:border-[#7ec8ff]/70 text-slate-200 hover:text-white',
+                'flex items-center gap-2 border px-3 py-1 rounded text-xs font-rajdhani font-semibold tracking-wider transition-all duration-200 cursor-pointer group'
+              ]"
+              title="Accéder à mon profil"
+            >
+              <svg class="w-4 h-4 text-[#7ec8ff] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <span class="font-mono font-bold text-white">{{ userStore.username }}</span>
+              <span class="font-mono font-bold">{{ userStore.username }}</span>
               <span v-if="userStore.rank" class="text-[10px] text-slate-400 font-mono hidden md:inline">
                 (#{{ userStore.rank }})
               </span>
-            </div>
+            </RouterLink>
 
             <!-- Logout Button -->
             <button

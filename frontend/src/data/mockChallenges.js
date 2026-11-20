@@ -2,6 +2,7 @@
  * Mocked CTF Challenges Data - V1 Specifications
  * 100% Web HTTPS via Traefik Reverse Proxy
  * Zero Lorem Ipsum - Realistic technical descriptions & scenarios
+ * Docker images strictly conforming to the orchestrator whitelist (^ctf/...)
  */
 
 export const mockChallenges = [
@@ -23,6 +24,7 @@ En exploitant une technique d'injection SQL aveugle (inférence booléenne ou in
 Format du flag attendu : CTF{...}`,
     targetSubdomain: 'sqli-blind-chal',
     targetUrl: 'https://a9f3b8c1.chal.ctf.upjv.local',
+    dockerImage: 'ctf/web-sqli-blind:1.0',
     flag: 'CTF{bl1nd_sql1_b00l34n_3xf1ltr4t10n}'
   },
   {
@@ -43,6 +45,7 @@ L'absence d'assainissement HTML et l'absence de flag HttpOnly sur le cookie de s
 Format du flag attendu : CTF{...}`,
     targetSubdomain: 'xss-stored-chal',
     targetUrl: 'https://d4e7a2b9.chal.ctf.upjv.local',
+    dockerImage: 'ctf/web-xss-stored:1.0',
     flag: 'CTF{st0r3d_xss_c00k13_h1j4ck_succ3ss}'
   },
   {
@@ -64,6 +67,7 @@ Le contrôle d'accès vérifie que vous êtes connecté, mais n'associe pas le j
 Format du flag attendu : CTF{...}`,
     targetSubdomain: 'idor-api-chal',
     targetUrl: 'https://c1f8e4a7.chal.ctf.upjv.local',
+    dockerImage: 'ctf/web-idor-api:1.2',
     flag: 'CTF{1d0r_unpr0t3ct3d_4p1_3ndp01nt}'
   },
   {
@@ -84,6 +88,7 @@ Concevez une page web externe qui force le navigateur de la victime connectée �
 Format du flag attendu : CTF{...}`,
     targetSubdomain: 'csrf-takeover-chal',
     targetUrl: 'https://e8b2c4d9.chal.ctf.upjv.local',
+    dockerImage: 'ctf/web-csrf-takeover:1.0',
     flag: 'CTF{csrf_4cc0unt_t4k30v3r_n0_s4m3s1t3}'
   },
   {
@@ -104,6 +109,7 @@ Exploitez cette faille SSRF pour interroger le service de métadonnées interne 
 Format du flag attendu : CTF{...}`,
     targetSubdomain: 'ssrf-pdf-chal',
     targetUrl: 'https://b7e3f1a2.chal.ctf.upjv.local',
+    dockerImage: 'ctf/web-ssrf-pdf:2.0',
     flag: 'CTF{ssrf_cl0ud_m3t4d4t4_3xf1ltr4t10n}'
   },
   {
@@ -124,6 +130,7 @@ La bibliothèque de vérification cryptographique est mal configurée et accepte
 Format du flag attendu : CTF{...}`,
     targetSubdomain: 'jwt-auth-chal',
     targetUrl: 'https://f2d9c1b8.chal.ctf.upjv.local',
+    dockerImage: 'ctf/web-jwt-bypass:1.1',
     flag: 'CTF{jwt_n0n3_4lg_byp4ss_c0nfus10n}'
   },
   {
@@ -144,6 +151,7 @@ Cette fuite d'information constitue un oracle de déchiffrement complet. Automat
 Format du flag attendu : CTF{...}`,
     targetSubdomain: 'padding-oracle-chal',
     targetUrl: 'https://7a3b9c2e.chal.ctf.upjv.local',
+    dockerImage: 'ctf/web-padding-oracle:1.0',
     flag: 'CTF{p4dd1ng_0r4cl3_c00k13_d3crypt_succ3ss}'
   }
 ]

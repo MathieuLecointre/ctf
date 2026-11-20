@@ -2,9 +2,9 @@ import api from './api'
 import { mockChallenges } from '../data/mockChallenges'
 
 /**
- * Challenge Service - V1 Web HTTPS Specifications
+ * Challenge Service - V1 Web HTTPS Specifications & Admin Back-office
  * Handles challenge discovery, Docker instance lifecycle (start, stop, extend),
- * and flag validation with resilient offline fallback support.
+ * flag validation, and Admin CRUD operations with resilient offline fallback.
  */
 export const challengeService = {
   /**
@@ -71,7 +71,6 @@ export const challengeService = {
       const response = await api.post(`/instances/${instanceId}/extend`)
       return response.data
     } catch (err) {
-      // Propagate error if backend responded with specific status
       if (err.response && err.response.status === 409) {
         const quotaError = new Error(err.response.data?.detail || 'Durée maximale de prolongation atteinte.')
         quotaError.status = 409
@@ -117,6 +116,68 @@ export const challengeService = {
       throw err
     }
   },
+
+  // ==========================================
+  // ADMIN CRUD OPERATIONS (Protected with fallback)
+  // ==========================================
+
+  /**
+   * Admin: Create a new CTF Challenge
+   * Endpoint: POST /admin/challenges
+   * @param {Object} payload - Challenge form data
+   * @returns {Promise<Object>} Created challenge
+   */
+  async createChallenge(payload) {
+    try {
+      const response = await api.post('/admin/challenges', payload)
+      return response.data
+    } catch (err) {
+      console.warn('[Admin Service / Fallback] Création en mode résilient local.')
+      const newChal = {
+        ...payload,
+        id: payload.id || `chal-${Date.now().toString(36)}`,
+        solvedPercent: 0,
+        author: payload.author || 'Admin',
+        targetUrl: payload.targetUrl || `https://${Math.random().toString(36).substring(2, 10)}.chal.ctf.upjv.local`,
+        borderAccent: 'border-emerald-500/80',
+        badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+      }
+      return newChal
+    }
+  },
+
+  /**
+   * Admin: Update an existing challenge
+   * Endpoint: PUT /admin/challenges/${id}
+   * @param {string|number} id
+   * @param {Object} payload
+   * @returns {Promise<Object>} Updated challenge
+   */
+  async updateChallenge(id, payload) {
+    try {
+      const response = await api.put(`/admin/challenges/${id}`, payload)
+      return response.data
+    } catch (err) {
+      console.warn('[Admin Service / Fallback] Mise à jour en mode résilient local.')
+      return { id, ...payload }
+    }
+  },
+
+  /**
+   * Admin: Delete a challenge
+   * Endpoint: DELETE /admin/challenges/${id}
+   * @param {string|number} id
+   * @returns {Promise<Object>} Deletion result
+   */
+  async deleteChallenge(id) {
+    try {
+      const response = await api.delete(`/admin/challenges/${id}`)
+      return response.data
+    } catch (err) {
+      console.warn('[Admin Service / Fallback] Suppression en mode résilient local.')
+      return { success: true, id }
+    }
+  }
 }
 
 export default challengeService

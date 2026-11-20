@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '../stores/userStore'
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 
 const activeTab = ref('login') // 'login' | 'register'
@@ -30,8 +31,9 @@ const handleAuth = async () => {
       email: email.value,
       username: usernameInput.value || email.value.split('@')[0]
     })
-    // Redirect to home after successful authentication
-    router.push('/')
+    // Redirect to requested page or home after successful authentication
+    const redirectPath = route.query.redirect || '/'
+    router.push(redirectPath)
   } catch (err) {
     errorMessage.value = 'Erreur lors de la tentative de connexion.'
   }
