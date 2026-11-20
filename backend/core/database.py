@@ -8,12 +8,18 @@ from sqlalchemy.orm import DeclarativeBase
 
 from backend.core.config import settings
 
+# Configuration du timeout de connexion pour eviter les blocages si la base est en cours de demarrage
+connect_args = {}
+if settings.async_database_url.startswith("postgresql"):
+    connect_args = {"timeout": 3}
+
 # Creation du moteur asynchrone SQLAlchemy
 engine = create_async_engine(
     settings.async_database_url,
     echo=settings.DEBUG,
     future=True,
     pool_pre_ping=True,
+    connect_args=connect_args,
 )
 
 # Fabrique de sessions asynchrones
